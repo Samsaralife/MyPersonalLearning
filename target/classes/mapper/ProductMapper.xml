@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cugb.dao.ProductMapper">
+	<!-- 数据库列与实体映射字段 -->
+	<resultMap type="product" id="ProductMapper1">
+		<id column="id" property="id"/>
+		<result column="product_name" property="productName"/>
+		<result column="stock" property="stock"/>
+		<result column="price" property="price"/>
+		<result column="version" property="version"/>
+		<result column="note" property="note"/>
+	</resultMap>
+	<!-- 插入产品 -->
+	<insert id="insertProduct" parameterType="product" useGeneratedKeys="true" keyProperty="id">
+		insert into t_product(product_name,stock,price,version,note) 
+		values(#{productName},#{stock},#{price},#{version},#{note})
+	</insert>
+	<!-- 根据id获取产品 -->
+	<select id="getProduct" parameterType="Long" resultMap="ProductMapper1">
+		select id, product_name,
+		stock, price, version, note from t_product where id = #{id}
+	</select>
+	<!-- 根据id扣减产品数量 -->
+	<update id="decreaseProduct" parameterType="map">
+		update t_product set stock = stock - #{quantity},
+		version = version + 1
+		where id=#{id} and version = #{version}
+	</update>
+	<!-- 批量插入产品 -->
+	<insert id="batchInsertProduct" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+		insert into t_product(product_name,stock,price,version,note)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(
+			#{item.productName},
+			#{item.stock},
+			#{item.price},
+			#{item.version},
+			#{item.note}
+			)
+		</foreach>
+	</insert>
+	<!-- 更新产品 -->
+	<update id="updateProduct" parameterType="product">
+		update t_product 
+		<set>
+			<if test="productName != null">
+				product_name = #{productName},
+			</if>
+			<if test="stock != null">
+				stock = #{stock},
+			</if>
+			<if test="price != null">
+				price = #{price},
+			</if>
+			<if test="version != null">
+				version = #{version},
+			</if>
+			<if test="note != null">
+				note = #{note}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 删除产品 -->
+	<delete id="deleteProduct" parameterType="long">
+		delete from t_product where id = #{id}
+	</delete>
+</mapper>

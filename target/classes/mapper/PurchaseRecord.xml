@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cugb.dao.PurchaseRecordMapper">
+	<!-- 数据库列记录和实体类字段映射关系 -->
+	<resultMap type="purchaseRecord" id="PurchaseRecord">
+		<id column="id" property="id"/>
+		<result column="user_id" property="userId"/>
+		<result column="product_id" property="productId"/>
+		<result column="price" property="price"/>
+		<result column="quantity" property="quantity"/>
+		<result column="sum" property="sum"/>
+		<result column="purchase_date" property="purchaseTime"/>
+		<result column="note" property="note"/>
+	</resultMap>
+<!-- 插入购买记录 -->
+<insert id="purchaseRecord" parameterType="purchaseRecord">
+	insert into t_product_record(user_id,product_id,price,quantity,sum,purchase_date,note)
+	values(#{userId},#{productId},#{price},#{quantity},#{sum},now(),#{note})
+</insert>
+<!-- 根据用户id获取购买记录 -->
+<select id="getPurchaseRecordByUserId" parameterType="int" resultMap="PurchaseRecord">
+	select id,user_id,product_id,price,quantity,sum,purchase_date,note from t_product_record 
+	where user_id=#{userId}
+</select>
+</mapper>
